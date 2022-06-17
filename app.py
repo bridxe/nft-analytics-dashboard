@@ -25,21 +25,27 @@ def main():
     with st.sidebar.form("parameters"):
         collection = st.selectbox("Choose Collection", keys)
         series = st.selectbox("Choose series", ("floor_7d", "avg_volume_1d", "volume_1d", "sold_1d"))
-        metric = st.selectbox("Choose metric", ("norm", "estimated_returns"))
+        metric = st.selectbox("Choose metric", ("norm", "estimated_returns", "returns", "max_drawdown", "calmar"))
         submitted = st.form_submit_button("Submit")
 
     if submitted:
         st.title(collection)
         ts = cr.load_data(contracts[collection], series)
+        qm = QuantMetrics(ts)
         if metric == "norm":
             plt.plot(ts['ds'], ts['y'], color='red')
-        else:
-            qm = QuantMetrics(ts)
-            if metric == "estimated_returns":
-                qm.estimated_returns()
-                plt.plot(ts['ds'], ts['er'], color='red')
-            else:
-                print('TODO')        
+        elif metric == "estimated_returns":
+            qm.estimated_returns()
+            plt.plot(ts['ds'], ts['er'], color='red')
+        elif metric == "returns":
+            qm.calmar(7)
+            plt.plot(ts['ds'], ts['returns'], color='red')
+        elif metric == "max_drawdown":
+            qm.calmar(7)
+            plt.plot(ts['ds'], ts['max_drawdown'], color='red')
+        elif metric == "calmar":
+            qm.calmar(7)
+            plt.plot(ts['ds'], ts['calmar'], color='red')
         st.pyplot(plt)
 
 

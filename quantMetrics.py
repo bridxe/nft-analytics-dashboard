@@ -14,3 +14,31 @@ class QuantMetrics:
         er = np.append(er, [0])
         self.df['er'] = pd.Series(er)
         return er
+
+    def calmar(self, days):
+        calmar, max_drawdown, returns = [], [], []
+        for i in range(0, len(self.df) - days):
+            sample = self.df['y'][i:i+days]
+            print(sample)
+            peak = trough = sample[i]
+            drawdown = 1
+            for j in range(1, days):
+                # case 1: greater than previous peak
+                if sample[i+j] > peak:
+                    drawdown = min((trough - peak) / peak, drawdown)
+                    peak = trough = sample[i+j]
+                else:
+                    trough = min(sample[i+j], trough)
+            drawdown = min((trough - peak) / peak, drawdown)
+            max_drawdown.append(drawdown)
+
+            ret = (sample[i+days-1] - sample[i]) / sample[i]
+            returns.append(ret)
+
+            calmar.append(ret / drawdown)
+
+        self.df['max_drawdown'] = pd.Series(np.array(max_drawdown))
+        self.df['returns'] = pd.Series(np.array(returns))
+        self.df['calmar'] = pd.Series(np.array(calmar))
+
+        return self.df[['max_drawdown', 'returns', 'calmar']]
