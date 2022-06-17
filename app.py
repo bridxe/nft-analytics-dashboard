@@ -25,7 +25,7 @@ def main():
     with st.sidebar.form("parameters"):
         collection = st.selectbox("Choose Collection", keys)
         series = st.selectbox("Choose series", ("floor_7d", "avg_volume_1d", "volume_1d", "sold_1d"))
-        metric = st.selectbox("Choose metric", ("norm", "estimated_returns", "returns", "max_drawdown", "calmar"))
+        metric = st.selectbox("Choose metric", ("norm", "estimated_returns", "returns", "max_drawdown", "calmar", "sharpe", "sortino"))
         submitted = st.form_submit_button("Submit")
 
     if submitted:
@@ -46,6 +46,12 @@ def main():
         elif metric == "calmar":
             qm.calmar(7)
             plt.plot(ts['ds'], ts['calmar'], color='red')
+        elif metric == "sharpe":
+            qm.sharpe(7)
+            plt.plot(ts['ds'], ts['sharpe'], color='red')
+        elif metric == 'sortino':
+            qm.sortino(7)
+            plt.plot(ts['ds'], ts['sortino'], color='red')
         st.pyplot(plt)
 
 

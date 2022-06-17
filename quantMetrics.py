@@ -42,3 +42,22 @@ class QuantMetrics:
         self.df['calmar'] = pd.Series(np.array(calmar))
 
         return self.df[['max_drawdown', 'returns', 'calmar']]
+
+    def sharpe(self, days):
+        er = self.estimated_returns()
+        sharpe = []
+        for i in range(0, len(er) - days):
+            er_sample = er[i:i+days]
+            sharpe.append(er_sample.mean() / er_sample.std())
+        self.df['sharpe'] = pd.Series(np.array(sharpe))
+
+    def sortino(self, days):
+        er = self.estimated_returns()
+        sortino = []
+        for i in range(0, len(er) - days):
+            er_sample = er[i:i+days]
+            downside = np.array([x for x in er_sample if x < 0])
+            dr = downside.std() if len(downside) > 0 else 0
+            sortino.append((er_sample.mean() * days) / (dr * np.sqrt(days)))
+        self.df['sortino'] = pd.Series(np.array(sortino))
+        
