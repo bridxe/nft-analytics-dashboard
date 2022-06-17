@@ -1,6 +1,8 @@
 from datetime import datetime
 import pandas as pd
 import requests
+from sklearn.preprocessing import MinMaxScaler
+
 
 class CovalentReader():
     def __init__(self, api_key):
@@ -38,5 +40,23 @@ class CovalentReader():
     def get_df(self, address):
         ts = self.get_ts(address)
         d = self.format_ts(ts)
-        df = self.dict_to_df(d)
+        self.df = self.dict_to_df(d)
+        return self.df
+
+    def format_columns(self, df, target):
+        df2 = df.reset_index()
+        df2 = df2[['index', target]]
+        df2.columns = ['ds', 'y']
+        return df2
+
+    def normalize(self, df):
+        arr = df['y'].to_numpy().reshape(-1, 1)
+        scaled = MinMaxScaler().fit_transform(arr)
+        df['y'] = scaled.flatten()
         return df
+
+    def load_data(self, address, target):
+        df = self.get_df(address)
+        df = self.format_columns(df, target)
+        self.df_norm = self.normalize(df)
+        return self.df_norm

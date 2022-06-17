@@ -2,12 +2,12 @@ import json
 import matplotlib.pyplot as plt
 import streamlit as st
 from time import sleep
-from prophetPreprocessor import ProphetPreprocessor
+from covalentReader import CovalentReader
 
 api_key = 'ckey_70a8a6bf18464adc99f3057a1ac'
 
 def main():
-    prophetpre = ProphetPreprocessor(api_key)
+    cr = CovalentReader(api_key)
 
     @st.cache(persist=True)
     def load_data():
@@ -27,10 +27,11 @@ def main():
 
     if submitted:
         st.title(collection)
-        ts = prophetpre.load_data(contracts[collection], metric)
+        ts = cr.load_data(contracts[collection], metric)
         plt.plot(ts['ds'], ts['y'], color='red')
         st.pyplot(plt)
 
 
 if __name__ == '__main__':
     main()
+    
