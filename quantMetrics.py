@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 class QuantMetrics:
     def __init__(self, df):
         self.df = df
@@ -60,4 +61,3 @@ class QuantMetrics:
             dr = downside.std() if len(downside) > 0 else 0
             sortino.append((er_sample.mean() * days) / (dr * np.sqrt(days)))
         self.df['sortino'] = pd.Series(np.array(sortino))
-        

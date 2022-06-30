@@ -5,6 +5,7 @@ from time import sleep
 
 from covalentReader import CovalentReader
 from quantMetrics import QuantMetrics
+from tsForecast import TsForecast
 
 api_key = 'ckey_70a8a6bf18464adc99f3057a1ac'
 
@@ -31,9 +32,23 @@ def main():
     if submitted:
         st.title(collection)
         ts = cr.load_data(contracts[collection], series)
+        forecast = TsForecast(ts)
         qm = QuantMetrics(ts)
         if metric == "norm":
-            plt.plot(ts['ds'], ts['y'], color='red')
+            # TO-DO: create wrapper function where you pass in the function to run
+            # e.g. plot.plot(), forecast.cv_ets(), forecast.predict_ets()
+            # maybe conflate forecast.create_ts() INSIDE forecast.cv_ets() and forecast.predict_ets()
+            # and pass in arguments e.g.
+            # if function == 'quant':
+            #   display(plot.plot(), metric)
+            # elif function == 'predict':
+            #   display(forecast.predict_ets(), metric)
+            # 
+            # commented out for clarity:
+            # plt.plot(ts['ds'], ts['y'], color='red')
+            forecast.create_ts('y')
+            # forecast.cv_ets(30)
+            forecast.predict_ets(100)
         elif metric == "estimated_returns":
             qm.estimated_returns()
             plt.plot(ts['ds'], ts['er'], color='red')
